@@ -1,0 +1,77 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2412                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      phaseProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+type    massTransferMultiphaseSystem;
+
+phases  (liquid gas);
+
+liquid
+{
+    type            pureMovingPhaseModel;
+}
+
+gas
+{
+    type            multiComponentMovingPhaseModel;
+}
+
+// Removes the heat-conduction contribution of nut (see turbulenceProperties)
+Prt             1e10;
+
+surfaceTension
+(
+    (gas and liquid)
+    {
+        type            constant;
+        sigma           0.000728;    // physical value (0.0728 N/m) x 0.01: the surface stays flat, this only relaxes the capillary time-step limit
+    }
+);
+
+// Evaporation/condensation at the water surface below the boiling point:
+// the gas at the interface is saturated (Antoine vapour pressure at the local
+// temperature) and the mass flux is set by the diffusion of vapour into the
+// air. Latent heat = Hf(vapour) - Hf(liquid) from the thermophysical files.
+massTransferModel
+(
+    (liquid to gas)
+    {
+        type                diffusionGasEvaporation;
+        species             vapour.gas;
+        isoAlpha            0.5;
+
+        // Open top: the volume of the vapour created at the surface is
+        // added to the pressure equation and leaves through the mouth.
+        includeVolChange    true;
+
+        saturationPressure
+        {
+            // p_sat = exp(A + B/(C + T)) [Pa]; water, 20 degC -> 2313 Pa,
+            // 45 degC -> 9570 Pa
+            type    Antoine;
+            A       23.1964;
+            B       -3816.44;
+            C       -46.13;
+        }
+
+        C                   1;
+        Tactivate           0;
+
+        // Interface diffusivity = (mu/Pr)_vapour/rho_vapour/Le = 2.6e-05 m2/s
+        Le                  0.5355;
+    }
+);
+
+// ************************************************************************* //

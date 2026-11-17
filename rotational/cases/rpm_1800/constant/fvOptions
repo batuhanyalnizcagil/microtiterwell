@@ -1,0 +1,40 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2412                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      fvOptions;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Orbital shaking.
+//
+// The well does NOT spin about its own axis: its centre travels on a circle
+// (orbit diameter 1 mm) while its orientation stays fixed. The case is solved
+// in the non-inertial frame that translates with the well, so the mesh is
+// static and the shaking enters as a time-varying body acceleration that is
+// combined with gravity (g_effective = g - a_well). Because the frame only
+// translates, there are no Coriolis/centrifugal terms (angular velocity = 0).
+//
+// constant/acceleration.dat (see README.md for the formula) contains
+//     (time ((ax ay az) (0 0 0) (0 0 0)))
+// for the 0 -> target RPM ramp (3 s) followed by constant-speed shaking.
+
+orbitalShaking
+{
+    type                tabulatedAccelerationSource;
+    active              yes;
+
+    timeDataFileName    "$FOAM_CASE/constant/acceleration.dat";
+    U                   U;
+}
+
+
+// ************************************************************************* //

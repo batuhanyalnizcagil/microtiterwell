@@ -1,0 +1,53 @@
+// Case description read by the Python post-processing scripts.
+// OpenFOAM does NOT read this file. If you change geometry, mesh or a physical
+// constant in the OpenFOAM dictionaries, change it here as well.
+// Format: one entry per line, "name  value(s)"; text after // is a comment.
+// SI units unless stated otherwise.
+
+// Case
+case_type  heating  // heating (2-D axisymmetric)
+top        open     // sealed (lid) or open (mouth at room air) - must match the 'top' patch in 0.orig
+
+// Run and heating (must match system/controlDict and 0.orig/T)
+end_time        450     // simulated time [s]
+heat_ramp_time  420     // heater ramps from T_ambient to T_heater_end in this time [s]
+T_heater_end    318.15  // final heater temperature [K]
+T_ambient       293.15  // room temperature [K]
+h_ambient       10      // heat transfer coefficient side wall / lid to the room [W/m2/K]
+
+// Initial and ambient state (must match 0.orig)
+p_initial   101325  // initial / ambient pressure [Pa]
+rh_initial  0.5     // initial relative humidity of the gas [-]
+rh_ambient  0.5     // relative humidity of the room air at the open mouth [-]
+T0_water    293.15  // reference temperature of the Boussinesq water density [K]
+
+// Geometry of the well (must match system/blockMeshDict)
+bottom_radius  0.003315  // [m]
+top_radius     0.0035    // radius at the rim [m]
+well_height    0.0109    // [m]
+wedge_angle    5         // angle of the 2-D axisymmetric wedge [deg]
+fill_height    0.00545   // initial water depth [m] (must match system/setFieldsDict)
+
+// Polystyrene walls (must match 0.orig/T)
+bottom_thickness  0.001  // [m]
+side_thickness    0.001  // [m]
+lid_thickness     0      // [m] (0 = lid modelled by h_ambient only)
+ps_conductivity   0.16   // thermal conductivity of polystyrene [W/m/K]
+
+// Mesh (must match system/blockMeshDict)
+mesh_level    coarse           // coarse / medium / fine (label only)
+n_axial       78               // cells along the axis
+n_radial      24               // cells in the radial direction
+cell_order    axial_first      // axial_first: blocks are axial first, then radial (do not run renumberMesh)
+cell_size     0.000138125      // axial cell size [m] (information only)
+capillary_dt  0.0005365466497  // capillary time-step limit [s] (maxDeltaT in system/controlDict = 0.9 x this)
+
+// Physical properties (must match constant/*)
+rho_water    998.2                      // density of water [kg/m3]
+beta_water   0.00032                    // thermal expansion of water [1/K]
+latent_heat  2430000                    // latent heat of evaporation [J/kg]
+W_water      18.015                     // molar mass of water [g/mol]
+W_air        28.96                      // molar mass of air [g/mol]
+antoine      23.1964  -3816.44  -46.13  // saturation pressure: p_sat = exp(A + B/(T + C)) [Pa], T in K
+D_vapour     2.6e-05                    // diffusivity of vapour in air [m2/s] (constant/fvOptions)
+k_gas        0.02621267606              // thermal conductivity of the gas [W/m/K]

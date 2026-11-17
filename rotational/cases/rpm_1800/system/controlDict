@@ -1,0 +1,140 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2412                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Case-specific values (system/caseParameters):
+//   maxDeltaTValue  - capillary time-step limit for the chosen mesh
+#include "caseParameters"
+
+application     interFoam;
+
+startFrom       latestTime;     // allows restarting an interrupted run
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         5;
+
+deltaT          1e-05;
+
+writeControl    adjustable;
+
+writeInterval   0.05;           // full 3-D fields (ParaView), 100 snapshots
+
+purgeWrite      0;
+
+writeFormat     binary;
+
+writePrecision  8;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   8;
+
+runTimeModifiable yes;
+
+adjustTimeStep  yes;
+
+maxCo           0.5;
+maxAlphaCo      0.5;
+maxDeltaT       $maxDeltaTValue;
+
+functions
+{
+    // Gradient of the phase fraction; sampled on the free surface it gives
+    // the interface normal (pointing into the water), from which the
+    // apparent contact angle at the wall is evaluated in post-processing.
+    gradAlpha
+    {
+        type            grad;
+        libs            (fieldFunctionObjects);
+        field           alpha.water;
+        result          gradAlpha;
+        executeControl  timeStep;
+        executeInterval 1;
+        writeControl    none;
+    }
+
+    // Free surface (alpha.water = 0.5) as a point cloud for the Python
+    // post-processing: x y z gradAlpha_x gradAlpha_y gradAlpha_z
+    freeSurface
+    {
+        type            surfaces;
+        libs            (sampling);
+        writeControl    adjustableRunTime;
+        writeInterval   0.004;
+
+        surfaceFormat   raw;
+        interpolationScheme cellPoint;
+        fields          (gradAlpha);
+
+        surfaces
+        {
+            interface
+            {
+                type            isoSurface;
+                isoField        alpha.water;
+                isoValue        0.5;
+                interpolate     true;
+            }
+        }
+    }
+
+    // Same surface as VTK for ParaView (coarser in time)
+    freeSurfaceVTK
+    {
+        type            surfaces;
+        libs            (sampling);
+        writeControl    adjustableRunTime;
+        writeInterval   0.02;
+
+        surfaceFormat   vtk;
+        interpolationScheme cellPoint;
+        fields          (U);
+
+        surfaces
+        {
+            interface
+            {
+                type            isoSurface;
+                isoField        alpha.water;
+                isoValue        0.5;
+                interpolate     true;
+            }
+        }
+    }
+
+    // Water volume remaining inside the well [m^3]; any decrease is water
+    // that left through the open top (spilling).
+    waterVolume
+    {
+        type            volFieldValue;
+        libs            (fieldFunctionObjects);
+        writeControl    timeStep;
+        writeInterval   20;
+        writeFields     false;
+        log             false;
+
+        regionType      all;
+        operation       volIntegrate;
+        fields          (alpha.water);
+    }
+}
+
+
+// ************************************************************************* //

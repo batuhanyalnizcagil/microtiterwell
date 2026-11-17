@@ -1,0 +1,52 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2412                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      air.gas;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Mass fraction of dry air in the gas phase.
+
+dimensions      [0 0 0 0 0 0 0];
+
+internalField   uniform 0.992868;
+
+boundaryField
+{
+    bottom
+    {
+        type            zeroGradient;
+    }
+
+    sideWall
+    {
+        type            zeroGradient;
+    }
+
+    top
+    {
+        type            fixedValue;
+        value           uniform 0.992868;
+    }
+
+    front
+    {
+        type            wedge;
+    }
+
+    back
+    {
+        type            wedge;
+    }
+}
+
+// ************************************************************************* //

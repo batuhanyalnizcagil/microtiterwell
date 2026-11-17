@@ -1,0 +1,15 @@
+#!/bin/sh
+# Runs the case in serial (the 2-D mesh is too small to benefit from MPI).
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
+#------------------------------------------------------------------------------
+
+[ -d constant/polyMesh ] || ./Allrun.pre
+
+# The full solver log would grow to tens of GB (millions of time steps), so
+# only one time step in every 2000 is kept, plus all warnings and errors.
+app=$(getApplication)
+echo "Running $app on $PWD"
+$app 2>&1 | awk '/^Time =/{n++} /FOAM FATAL/{f=1} f || n%2000==1 || /Warning/ {print; fflush()}' > log.$app
+
+#------------------------------------------------------------------------------

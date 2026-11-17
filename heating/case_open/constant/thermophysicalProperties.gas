@@ -1,0 +1,88 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2412                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      thermophysicalProperties.gas;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Gas = mixture of dry air and water vapour.
+
+thermoType
+{
+    type            heRhoThermo;
+    mixture         multiComponentMixture;
+    transport       const;
+    thermo          hConst;
+    equationOfState incompressiblePerfectGas;
+    specie          specie;
+    energy          sensibleEnthalpy;
+}
+
+species
+(
+    air
+    vapour
+);
+
+inertSpecie     air;
+
+// Species diffusion in the gas = alpha*nut/Sct (nut: see fvOptions)
+addDiffusion    true;
+Sct             1;
+
+vapour
+{
+    specie
+    {
+        nMoles      1;
+        molWeight   18.015;
+    }
+    equationOfState
+    {
+        pRef        101325;
+    }
+    thermodynamics
+    {
+        Hf          0;
+        Cp          1880;
+    }
+    transport
+    {
+        mu          1e-05;
+        Pr          1;
+    }
+}
+
+air
+{
+    specie
+    {
+        nMoles      1;
+        molWeight   28.96;
+    }
+    equationOfState
+    {
+        pRef        101325;
+    }
+    thermodynamics
+    {
+        Hf          0;
+        Cp          1006;
+    }
+    transport
+    {
+        mu          1.85e-05;
+        Pr          0.71;
+    }
+}
+
+// ************************************************************************* //

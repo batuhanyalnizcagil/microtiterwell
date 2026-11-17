@@ -1,0 +1,20 @@
+# Created when a case is run - not part of the set-up
+rotational/cases/*/[0-9]*
+!rotational/cases/*/0.orig/
+heating/case*/[0-9]*
+!heating/case*/0.orig/
+**/constant/polyMesh/
+**/processor*/
+**/postProcessing/
+**/log.*
+**/Allrun.out
+**/*.foam
+**/dynamicCode/
+
+# Post-processing output
+rotational/results*/
+heating/results*/
+
+# Python
+__pycache__/
+*.pyc

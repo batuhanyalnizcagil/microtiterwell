@@ -1,0 +1,83 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2412                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      T;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// bottom  : heater temperature Ta(t) = 293.15 K -> 318.15 K in 420 s, then constant,
+//           behind 1 mm of polystyrene (k = 0.16 W/m/K)
+// sideWall: 1 mm polystyrene + natural convection (h = 10 W/m2/K) to 293.15 K
+// top     : sealing film + natural convection (h = 10 W/m2/K) to 293.15 K
+
+dimensions      [0 0 0 1 0 0 0];
+
+internalField   uniform 293.15;
+
+boundaryField
+{
+    bottom
+    {
+        type            externalWallHeatFluxTemperature;
+        mode            coefficient;
+        Ta              {
+            type            table;
+            values
+            (
+                (0      293.15)
+                (420    318.15)
+                (450    318.15)
+            );
+            outOfBounds     clamp;
+            interpolationScheme linear;
+        }
+        h               constant 100000;
+        thicknessLayers (0.001);
+        kappaLayers     (0.16);
+        kappaMethod     fluidThermo;
+        value           uniform 293.15;
+    }
+
+    sideWall
+    {
+        type            externalWallHeatFluxTemperature;
+        mode            coefficient;
+        Ta              constant 293.15;
+        h               constant 10;
+        thicknessLayers (0.001);
+        kappaLayers     (0.16);
+        kappaMethod     fluidThermo;
+        value           uniform 293.15;
+    }
+
+    top
+    {
+        type            externalWallHeatFluxTemperature;
+        mode            coefficient;
+        Ta              constant 293.15;
+        h               constant 10;
+        kappaMethod     fluidThermo;
+        value           uniform 293.15;
+    }
+
+    front
+    {
+        type            wedge;
+    }
+
+    back
+    {
+        type            wedge;
+    }
+}
+
+// ************************************************************************* //

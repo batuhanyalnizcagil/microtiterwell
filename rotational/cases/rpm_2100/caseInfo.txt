@@ -1,0 +1,36 @@
+// Case description read by the Python post-processing scripts.
+// OpenFOAM does NOT read this file. If you change geometry, mesh or a physical
+// constant in the OpenFOAM dictionaries, change it here as well.
+// Format: one entry per line, "name  value(s)"; text after // is a comment.
+// SI units unless stated otherwise.
+
+// Case
+case_type  rotational  // rotational (orbital shaking)
+
+// Orbital shaking (must match constant/acceleration.dat)
+rpm                           2100         // target shaking speed [1/min]
+orbit_diameter                0.001        // diameter of the circle travelled by the well [m]
+ramp_time                     3            // linear speed ramp 0 -> rpm [s]
+max_centripetal_acceleration  24.18053078  // R*omega^2 at full speed [m/s2] (information only)
+
+// Run (must match system/controlDict)
+end_time  5  // simulated time [s]
+
+// Geometry of the well (must match system/blockMeshDict)
+bottom_radius  0.003315  // [m]
+top_radius     0.0035    // radius at the rim [m]
+well_height    0.0109    // [m]
+
+// Water (must match system/setFieldsDict)
+fill_height  0.00275          // initial water depth [m]
+fill_volume  9.628309307e-08  // initial water volume [m3] (information only)
+well_volume  3.976992432e-07  // volume of the whole well [m3] (information only)
+
+// Mesh (must match system/blockMeshDict and system/caseParameters)
+mesh_level     medium           // coarse / medium / fine (label only)
+n_cells        64480            // number of cells (information only)
+min_cell_size  0.0001213676275  // smallest cell size [m]
+capillary_dt   4.419307425e-05  // capillary time-step limit [s] (maxDeltaTValue = 0.9 x this)
+
+// Contact angle [deg] (must match 0.orig/alpha.water)
+contact_angle  advancing 95  receding 75  static 85  // advancing, receding and static angle

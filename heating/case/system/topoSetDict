@@ -1,0 +1,52 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2412                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      topoSetDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Cell zones used by constant/fvOptions (see comments there):
+// everything above the initial water surface is the gas zone.
+
+actions
+(
+    {
+        name    gasCells;
+        type    cellSet;
+        action  new;
+        source  boxToCell;
+        box     (-1 -1 0.00545) (1 1 1);
+    }
+    {
+        name    gasZone;
+        type    cellZoneSet;
+        action  new;
+        source  setToCellZone;
+        set     gasCells;
+    }
+    {
+        name    liquidCells;
+        type    cellSet;
+        action  new;
+        source  boxToCell;
+        box     (-1 -1 -1) (1 1 0.00545);
+    }
+    {
+        name    liquidZone;
+        type    cellZoneSet;
+        action  new;
+        source  setToCellZone;
+        set     liquidCells;
+    }
+);
+
+// ************************************************************************* //

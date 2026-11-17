@@ -1,0 +1,51 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2412                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      fvOptions;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Constant "turbulent" viscosity used as the vapour diffusivity (Sct = 1):
+//   gas zone    : nut = Cmu*k^2/epsilon = 2.6e-05 m2/s  (water vapour in air)
+//   liquid zone : nut ~ 1e-18 m2/s                  (no effect on the water)
+
+vapourDiffusivityGas
+{
+    type            scalarFixedValueConstraint;
+    active          yes;
+
+    selectionMode   cellZone;
+    cellZone        gasZone;
+
+    fieldValues
+    {
+        k           0.0001;
+        epsilon     3.46154e-05;
+    }
+}
+
+laminarLiquid
+{
+    type            scalarFixedValueConstraint;
+    active          yes;
+
+    selectionMode   cellZone;
+    cellZone        liquidZone;
+
+    fieldValues
+    {
+        k           1e-10;
+        epsilon     0.001;
+    }
+}
+
+// ************************************************************************* //

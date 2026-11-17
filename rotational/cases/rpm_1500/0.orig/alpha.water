@@ -1,0 +1,71 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2412                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      alpha.water;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 0 0 0 0];
+
+internalField   uniform 0;
+
+// Dynamic contact angle, water on untreated polystyrene.
+//
+// OpenFOAM evaluates
+//     theta = theta0 + (thetaA - thetaR)*tanh(uwall/uTheta)
+// so the angle swings by +/-(thetaA - thetaR) around theta0.
+// Target physical values: advancing 95 deg, receding 75 deg (static ~88 deg).
+// To keep the model inside [75, 95] deg we therefore use
+//     theta0          = (95 + 75)/2 = 85
+//     |thetaA - thetaR| = (95 - 75)/2 = 10
+// Sign: uwall is positive where the water recedes, so the receding angle
+// (75 deg) requires thetaA - thetaR = -10  -> thetaA 85, thetaR 95.
+// With the opposite sign (thetaA 95, thetaR 85) the receding contact line
+// sees the larger angle, which is self-exciting: a 0.15 s test at rest gave
+// a contact-line ripple growing to +/-0.7 mm, versus 0.02 mm with the
+// setting below (see README, "Contact-line ripple").
+// uTheta is the contact-line velocity scale at which the limit angles are
+// approached (tunable; 0.1 m/s is of the order of the wall speed of the
+// rotating wave at mid RPM).
+contactAngle
+{
+    type            dynamicAlphaContactAngle;
+    theta0          85;
+    thetaA          85;
+    thetaR          95;
+    uTheta          0.1;
+    limit           gradient;
+    value           uniform 0;
+}
+
+boundaryField
+{
+    bottom
+    {
+        $contactAngle;
+    }
+
+    sideWall
+    {
+        $contactAngle;
+    }
+
+    atmosphere
+    {
+        type            inletOutlet;
+        inletValue      uniform 0;
+        value           uniform 0;
+    }
+}
+
+
+// ************************************************************************* //

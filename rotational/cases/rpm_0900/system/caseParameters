@@ -1,0 +1,25 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2412                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      caseParameters;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// rpm          900
+// mesh level   medium (smallest cell size 0.000121 m)
+//
+// Explicit surface tension is only stable below the capillary time step
+// sqrt(rho_avg*dx^3/(2*pi*sigma)) = 4.42e-05 s; maxDeltaT is set to 0.9 of it.
+
+maxDeltaTValue  3.98e-05;
+
+// ************************************************************************* //

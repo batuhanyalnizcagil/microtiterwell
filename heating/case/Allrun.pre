@@ -1,0 +1,15 @@
+#!/bin/sh
+# Pre-processing only: mesh, cell zones and initial fields. Does NOT start the solver.
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
+#------------------------------------------------------------------------------
+
+runApplication blockMesh
+runApplication checkMesh
+runApplication topoSet
+
+restore0Dir
+
+runApplication setFields
+
+#------------------------------------------------------------------------------
