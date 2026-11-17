@@ -65,7 +65,8 @@ cd rotational/cases/rpm_1500
   `rotational/run_all.sh 300 900` (selected speeds). `run_slurm_array.sh` is a
   template for a SLURM cluster.
 - Simulated time 5 s. Measured run time on 4 cores (medium mesh, 64 480 cells):
-  about 15 h for 1500 rpm.
+  about 15 h for 1500 rpm (measured with a 0.5 mm orbit radius; the stronger shaking of the
+  current 1 mm radius may take longer).
 - The solver log keeps only one time step in every 200 (plus warnings/errors) to
   stay small.
 
@@ -193,8 +194,8 @@ The contact-angle entries look reversed (`thetaA 85; thetaR 95`) on purpose: in
 so this gives 75 deg receding and 95 deg advancing. The opposite sign makes the contact
 line self-exciting (a numerical ripple of about +/-0.7 mm); see the comment in the file.
 
-**Shaking table.** The well moves on a circle of radius R = 0.5 mm (orbit diameter
-1 mm) without turning. The case is solved in the frame that translates with the well,
+**Shaking table.** The well moves on a circle of radius R = 1 mm (orbit diameter
+2 mm) without turning. The case is solved in the frame that translates with the well,
 so the shaking is a uniform body acceleration added to gravity
 (`tabulatedAccelerationSource` in `constant/fvOptions`). `constant/acceleration.dat`
 lists the acceleration of the well every 0.25 ms from 0 to 5.1 s:
@@ -249,7 +250,7 @@ For a finer mesh, scale the cell counts in `blockMeshDict` and reduce `maxDeltaT
 ## 5. Modelling notes and known solver artefacts
 
 - **Orbital shaking:** solved in the translating frame of the well; the mesh does not
-  move. Orbit diameter 1 mm, linear speed ramp 0 -> target in 3 s, total 5 s. Water
+  move. Orbit radius 1 mm (diameter 2 mm), linear speed ramp 0 -> target in 3 s, total 5 s. Water
   2.75 mm deep, open top (`atmosphere` patch, total pressure 0 relative to ambient).
 - **Heating, incompressible solver:** `icoReactingMultiphaseInterFoam` does not solve a
   pressure rise in the closed gas; it is evaluated in post-processing.

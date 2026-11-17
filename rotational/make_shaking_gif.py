@@ -6,7 +6,7 @@ free surface of one case.
     python3 make_shaking_gif.py                      # rpm 1500, t = 4.0 ... 4.4 s
     python3 make_shaking_gif.py --rpm 1500 --t0 2.0 --t1 2.4 --fps 10
 
-Left : top view to scale. The well (rim circle) travels on the 1 mm orbit
+Left : top view to scale. The well (rim circle) travels on the orbit (radius from caseInfo)
        without turning (the black tick keeps its direction). Coloured dots: free
        surface, coloured by height. Blue arrow: acceleration of the well a_w,
        purple arrow: inertial force per unit mass -a_w felt by the liquid.
@@ -131,7 +131,7 @@ def main():
         ax.set_aspect("equal")
         ax.set_xlabel("x [mm] (laboratory)")
         ax.set_ylabel("y [mm]")
-        ax.set_title("Top view, to scale (red dashed: 1 mm orbit)", fontsize=10)
+        ax.set_title("Top view, to scale (red dashed: orbit, radius %.1f mm)" % (r_orb * MM), fontsize=10)
         ax.text(-lim + 0.2, -lim + 0.25,
                 "blue: acceleration of the well\npurple: inertial force on the liquid\n"
                 "orange dot: wave crest at the wall", fontsize=7.5, va="bottom")

@@ -8,10 +8,10 @@
 case_type  rotational  // rotational (orbital shaking)
 
 // Orbital shaking (must match constant/acceleration.dat)
-rpm                           1500        // target shaking speed [1/min]
-orbit_diameter                0.001       // diameter of the circle travelled by the well [m]
-ramp_time                     3           // linear speed ramp 0 -> rpm [s]
-max_centripetal_acceleration  12.3370055  // R*omega^2 at full speed [m/s2] (information only)
+rpm                           1500       // target shaking speed [1/min]
+orbit_diameter                0.002      // diameter of the circle travelled by the well [m]
+ramp_time                     3          // linear speed ramp 0 -> rpm [s]
+max_centripetal_acceleration  24.674011  // R*omega^2 at full speed [m/s2] (information only)
 
 // Run (must match system/controlDict)
 end_time  5  // simulated time [s]

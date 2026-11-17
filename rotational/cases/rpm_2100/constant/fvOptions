@@ -17,7 +17,7 @@ FoamFile
 // Orbital shaking.
 //
 // The well does NOT spin about its own axis: its centre travels on a circle
-// (orbit diameter 1 mm) while its orientation stays fixed. The case is solved
+// (orbit radius 1 mm, diameter 2 mm) while its orientation stays fixed. The case is solved
 // in the non-inertial frame that translates with the well, so the mesh is
 // static and the shaking enters as a time-varying body acceleration that is
 // combined with gravity (g_effective = g - a_well). Because the frame only
